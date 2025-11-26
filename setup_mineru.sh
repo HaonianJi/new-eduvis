@@ -20,6 +20,18 @@ esac
 echo "Detected Platform: ${PLATFORM}"
 echo ""
 
+# Check Git
+if ! command -v git &> /dev/null; then
+    echo "❌ Error: Git is required but not found."
+    echo "Please install Git first:"
+    if [ "${PLATFORM}" = "macOS" ]; then
+        echo "  xcode-select --install"
+    else
+        echo "  sudo apt-get install git"
+    fi
+    exit 1
+fi
+
 # Check Python version
 PYTHON_CMD=""
 if command -v python &> /dev/null; then
@@ -48,12 +60,29 @@ if [ "${PYTHON_MAJOR}" -lt 3 ] || ([ "${PYTHON_MAJOR}" -eq 3 ] && [ "${PYTHON_MI
 fi
 
 echo ""
-echo "Step 1/5: Creating MinerU directory..."
-mkdir -p MinerU
+echo "Step 1/6: Cloning MinerU repository..."
+if [ -d "MinerU" ]; then
+    echo "⚠️  MinerU directory already exists."
+    read -p "Do you want to update it? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Updating MinerU repository..."
+        cd MinerU
+        git pull
+        cd ..
+    else
+        echo "Skipping clone, using existing directory."
+    fi
+else
+    echo "Cloning from GitHub..."
+    git clone https://github.com/opendatalab/MinerU.git
+    echo "✅ Repository cloned"
+fi
+
 cd MinerU
 
 echo ""
-echo "Step 2/5: Creating Python virtual environment..."
+echo "Step 2/6: Creating Python virtual environment..."
 if [ ! -d "venv" ]; then
     ${PYTHON_CMD} -m venv venv
     echo "✅ Virtual environment created"
@@ -62,35 +91,31 @@ else
 fi
 
 echo ""
-echo "Step 3/5: Activating virtual environment..."
+echo "Step 3/6: Activating virtual environment..."
 source venv/bin/activate
 
 echo ""
-echo "Step 4/5: Installing MinerU..."
-echo "This may take a few minutes..."
-
-# Upgrade pip first
+echo "Step 4/6: Upgrading pip..."
 pip install --upgrade pip
 
-# Install MinerU
-# Use trusted-host to bypass SSL verification for wheels.myhloli.com
-pip install magic-pdf[full] --extra-index-url https://wheels.myhloli.com --trusted-host wheels.myhloli.com
+echo ""
+echo "Step 5/6: Installing MinerU..."
+echo "This may take 5-10 minutes depending on your network..."
+
+# Install magic-pdf with full dependencies
+pip install magic-pdf[full]==0.7.1b1 --extra-index-url https://wheels.myhloli.com
 
 echo ""
-echo "Step 5/5: Downloading models..."
-echo "Downloading models (will be downloaded automatically on first use)..."
-# Models will be downloaded automatically when first running magic-pdf
-# If you want to pre-download, use: magic-pdf --download-models
-if command -v magic-pdf &> /dev/null; then
-    echo "✅ magic-pdf is ready. Models will download on first use."
-else
-    echo "⚠️  magic-pdf command not found in PATH. You may need to restart your terminal."
-fi
+echo "Step 6/6: Downloading models..."
+echo "Downloading pipeline model (recommended for 8GB RAM)..."
+mineru-models-download --model_type pipeline
 
 echo ""
 echo "========================================"
 echo "  ✅ MinerU Installation Complete!"
 echo "========================================"
+echo ""
+echo "📁 MinerU installed at: $(pwd)"
 echo ""
 echo "🚀 Quick Start:"
 echo ""
@@ -108,10 +133,15 @@ echo "   mineru --help"
 echo ""
 
 if [ "${PLATFORM}" = "macOS" ]; then
-    echo "💡 macOS Tip: For better performance on Apple Silicon,"
-    echo "   consider installing the MLX backend:"
-    echo "   pip install magic-pdf[full-cpu-mlx]"
+    echo "💡 macOS Tips:"
+    echo "   • For better performance on Apple Silicon:"
+    echo "     pip install magic-pdf[full-cpu-mlx]"
+    echo "   • Check official docs: https://github.com/opendatalab/MinerU"
     echo ""
 fi
 
+echo "📚 Documentation:"
+echo "   • GitHub: https://github.com/opendatalab/MinerU"
+echo "   • Local docs: ./MinerU/README.md"
+echo ""
 echo "========================================"
