@@ -74,7 +74,7 @@ pip install --upgrade pip
 
 # Install MinerU
 # Use trusted-host to bypass SSL verification for wheels.myhloli.com
-pip install magic-pdf[full]==0.7.1b1 --extra-index-url https://wheels.myhloli.com --trusted-host wheels.myhloli.com
+pip install magic-pdf[full] --extra-index-url https://wheels.myhloli.com --trusted-host wheels.myhloli.com
 
 echo ""
 echo "Step 5/5: Downloading models..."
