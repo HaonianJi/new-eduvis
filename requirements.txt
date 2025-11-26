@@ -1,0 +1,12 @@
+# Paper2VisualPlan Dependencies
+# Python 3.10+ required
+
+# HTTP requests for Azure OpenAI API
+requests>=2.31.0
+
+# MinerU - PDF to Markdown conversion
+# Install with: pip install magic-pdf[full]==0.7.1b1 --extra-index-url https://wheels.myhloli.com
+# Note: Use setup_mineru.sh for easier installation
+
+# Optional: For development
+# python-dotenv>=1.0.0  # Load .env files (optional, os.getenv works without it)
