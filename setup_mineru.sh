@@ -78,8 +78,14 @@ pip install magic-pdf[full] --extra-index-url https://wheels.myhloli.com --trust
 
 echo ""
 echo "Step 5/5: Downloading models..."
-echo "Downloading pipeline model (recommended for 8GB RAM)..."
-mineru-models-download --model_type pipeline
+echo "Downloading models (will be downloaded automatically on first use)..."
+# Models will be downloaded automatically when first running magic-pdf
+# If you want to pre-download, use: magic-pdf --download-models
+if command -v magic-pdf &> /dev/null; then
+    echo "✅ magic-pdf is ready. Models will download on first use."
+else
+    echo "⚠️  magic-pdf command not found in PATH. You may need to restart your terminal."
+fi
 
 echo ""
 echo "========================================"
