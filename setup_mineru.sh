@@ -95,20 +95,21 @@ echo "Step 3/6: Activating virtual environment..."
 source venv/bin/activate
 
 echo ""
-echo "Step 4/6: Upgrading pip..."
+echo "Step 4/6: Upgrading pip and installing uv..."
 pip install --upgrade pip
+pip install uv
 
 echo ""
-echo "Step 5/6: Installing MinerU..."
-echo "This may take 5-10 minutes depending on your network..."
+echo "Step 5/6: Installing MinerU from source..."
+echo "This may take 10-20 minutes and download ~500MB+ dependencies..."
 
-# Install magic-pdf with full dependencies
-pip install magic-pdf[full]==0.7.1b1 --extra-index-url https://wheels.myhloli.com
+# Install MinerU from local repository (official method)
+uv pip install -e ".[core]"
 
 echo ""
 echo "Step 6/6: Downloading models..."
-echo "Downloading pipeline model (recommended for 8GB RAM)..."
-mineru-models-download --model_type pipeline
+echo "Downloading AI models (2-3GB)..."
+mineru-models-download
 
 echo ""
 echo "========================================"
